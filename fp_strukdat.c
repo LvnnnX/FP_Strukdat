@@ -81,15 +81,17 @@ void getnum(int b, int k) //angka apa aja yang bisa dimasukin
 }
 void nextnum(int b, int k) //ke kolom & baris selanjutnya yang 0
 {
+    int index = 9 * 9 + 1;
     for (int i = (b * 9) + (k * 9) + 1; i < 9 * 9 ; i++)
     {
         if(node[i / 9].nil[i % 9]==0)
         {
-            nb = i / 9;
-            nk = i % 9;
+            index = i;
             break;
         }
     }
+    nb = index / 9;
+    nk = index % 9;
 }
 void copy() //copy dari node ke copynode
 {
@@ -115,7 +117,7 @@ void copyback() //copy dari copynode ke node
 }
 int solve(int b, int k) // solving
 {
-    if(k>8) return 1;
+    if(b>8) return 1;
     if(node[b].nil[k]!=0)
     {
         nextnum(b,k);
@@ -137,6 +139,7 @@ int solve(int b, int k) // solving
         {
             copyback();
             ok = 1;
+            break;
         }
         find = find->next;
     }
