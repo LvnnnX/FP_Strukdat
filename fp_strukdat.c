@@ -14,7 +14,6 @@ struct put{
 	struct put *next;
 };
 struct put *maybe,*baru;
-int nb,nk;
 /* input = 
 +-----+-----+-----+
 |0 0 0|0 0 0|0 0 0|
@@ -87,8 +86,24 @@ int nextnum(int b, int k) //ke kolom & baris selanjutnya yang 0
     }
     return 9 * 9 + 1;
 }
+void setzerocpy()
+{
+    for (int i = 0; i < 9; i++)
+    {
+        memset(copynode[i].nil,0,9*sizeof(int));
+    }
+}
+void setzero()
+{
+    for (int i = 0; i < 9; i++)
+    {
+        memset(node[i].nil,0,9*sizeof(int));
+    }
+    
+}
 void copy() //copy dari node ke copynode
 {
+    
     for (int i = 0; i < 9; i++)
     {
         for (int j = 0; j < 9; j++)
@@ -96,6 +111,7 @@ void copy() //copy dari node ke copynode
             copynode[i].nil[j] = node[i].nil[j];
         }
     }
+    printf("\ncopy()\n");
 }
 void copyback() //copy dari copynode ke node
 {
@@ -130,11 +146,15 @@ int solve(int b, int k) // solving
     if(c==0)return 0;
     for (int i = 0; i < c; i++)
     {
+        setzerocpy();
         copy();
-        copynode[b].nil[k] = find->nil;
+        printf("%d find nil\n", find->nil);
+        int nil = find->nil;
+        copynode[b].nil[k] = nil;
         cek = nextnum(b,k);
         if(solve(cek/9,cek%9)==1)
         {
+            setzero();
             copyback();
             ok = 1;
             break;
