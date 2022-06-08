@@ -79,19 +79,13 @@ void getnum(int b, int k) //angka apa aja yang bisa dimasukin
 		}
 	}
 }
-void nextnum(int b, int k) //ke kolom & baris selanjutnya yang 0
+int nextnum(int b, int k) //ke kolom & baris selanjutnya yang 0
 {
-    int index = 9 * 9 + 1;
-    for (int i = (b * 9) + (k * 9) + 1; i < 9 * 9 ; i++)
+    for (int i = (b * 9) + k + 1; i < 9 * 9 ; i++)
     {
-        if(node[i / 9].nil[i % 9]==0)
-        {
-            index = i;
-            break;
-        }
+        if(node[i / 9].nil[i % 9]==0) return i;
     }
-    nb = index / 9;
-    nk = index % 9;
+    return 9 * 9 + 1;
 }
 void copy() //copy dari node ke copynode
 {
@@ -118,24 +112,28 @@ void copyback() //copy dari copynode ke node
 int solve(int b, int k) // solving
 {
     if(b>8) return 1;
+    int cek;
     if(node[b].nil[k]!=0)
     {
-        nextnum(b,k);
-        return solve(nb,nk);
+        printf("Cek : %d\n",node[b].nil[k]);
+        cek = nextnum(b,k);
+        return solve(cek/9,cek%9);
     }
+    printf("Cek : %d b %d k %d",node[b].nil[k],b+1,k+1);
     getnum(b,k);
     int c=0,ok=0;
     struct put *find;
     find = maybe;
-    while(find!=NULL){find=find->next;c++;}
+    while(find!=NULL){printf("%d ",find->nil);find=find->next;c++;}
     find = maybe;
+    printf("\n");
     if(c==0)return 0;
     for (int i = 0; i < c; i++)
     {
         copy();
         copynode[b].nil[k] = find->nil;
-        nextnum(b,k);
-        if(solve(nb,nk))
+        cek = nextnum(b,k);
+        if(solve(cek/9,cek%9)==1)
         {
             copyback();
             ok = 1;
@@ -156,7 +154,6 @@ int main(){
             node[i].nil[j] = x[j];
         }
     }
-    solve(0,0);
-    view();
+    if(solve(0,0)==1){view();}
     return 0;
 }
