@@ -58,22 +58,22 @@ void getnum(int b, int k) //angka apa aja yang bisa dimasukin
 {
 	free(maybe);
     maybe = NULL;
+    struct put *find;
 	for(int i=1;i<=9;i++)
 	{
 		if (cekpos(b,k,i)==1)
 		{
-            baru = malloc(sizeof(struct put));
+            baru = (struct put*)malloc(sizeof(struct put));
             baru->nil = i;
             baru->next = NULL;
 			if(maybe==NULL)
 			{
                 maybe = baru;
+                find = maybe;
 			}else
 			{
-				struct put *find;
-				find = maybe;
-				while(find->next!=NULL)find=find->next;
-				find->next=baru;
+				find->next = baru;
+                find = baru;
 			}
 		}
 	}
@@ -86,21 +86,6 @@ int nextnum(int b, int k) //ke kolom & baris selanjutnya yang 0
     }
     return 9 * 9 + 1;
 }
-void setzerocpy()
-{
-    for (int i = 0; i < 9; i++)
-    {
-        memset(copynode[i].nil,0,9*sizeof(int));
-    }
-}
-void setzero()
-{
-    for (int i = 0; i < 9; i++)
-    {
-        memset(node[i].nil,0,9*sizeof(int));
-    }
-    
-}
 void copy() //copy dari node ke copynode
 {
     
@@ -111,7 +96,6 @@ void copy() //copy dari node ke copynode
             copynode[i].nil[j] = node[i].nil[j];
         }
     }
-    printf("\ncopy()\n");
 }
 void copyback() //copy dari copynode ke node
 {
@@ -125,46 +109,51 @@ void copyback() //copy dari copynode ke node
     }
     
 }
-int solve(int b, int k) // solving
+int solve(struct data tile[9],int b, int k) // solving
 {
     if(b>8) return 1;
     int cek;
-    if(node[b].nil[k]!=0)
+    if(tile[b].nil[k]!=0)
     {
-        printf("Cek : %d\n",node[b].nil[k]);
+        
         cek = nextnum(b,k);
-        return solve(cek/9,cek%9);
+        return solve(tile,cek/9,cek%9);
     }
-    printf("Cek : %d b %d k %d",node[b].nil[k],b+1,k+1);
+    
     getnum(b,k);
     int c=0,ok=0;
     struct put *find;
     find = maybe;
-    while(find!=NULL){printf("%d ",find->nil);find=find->next;c++;}
-    find = maybe;
-    printf("\n");
+    while(find!=NULL){find=find->next;c++;}
     if(c==0)return 0;
-    for (int i = 0; i < c; i++)
+    while(maybe!=NULL)
     {
-        setzerocpy();
         copy();
-        printf("%d find nil\n", find->nil);
-        int nil = find->nil;
-        copynode[b].nil[k] = nil;
+        copynode[b].nil[k] = maybe->nil;
         cek = nextnum(b,k);
-        if(solve(cek/9,cek%9)==1)
+        if(solve(copynode,cek/9,cek%9)==1)
         {
-            setzero();
             copyback();
             ok = 1;
             break;
         }
-        find = find->next;
+        maybe = maybe->next;
     }
     return ok;
 }
+int countzero()
+{
+    int c=0;
+    for (int i = 0; i < 9; i++)
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            if(node[i].nil[j]==0)c++;
+        }
+    }
+    return c;
+}
 int main(){
-    int t;
     int x[9];
     for (int i = 0; i < 9; i++)
     {
@@ -174,6 +163,12 @@ int main(){
             node[i].nil[j] = x[j];
         }
     }
-    if(solve(0,0)==1){view();}
+    int t= countzero();
+    while(t!=0)
+    {
+        int cek = solve(node,0,0);
+        t = countzero();
+    }
+    view();
     return 0;
 }
