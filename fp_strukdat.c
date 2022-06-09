@@ -30,16 +30,19 @@ struct put *maybe,*baru;
 */
 void view(struct data node[])
 {
-    printf("+-----+-----+-----+")
+    printf("+-----+-----+-----+\n");
     for (int i = 0; i < 9; i++)
     {
+        if(i==3||i==6)printf("|-----+-----+-----|\n");
         for (int j = 0; j < 9; j++)
         {
-            if(j%2==1) printf(" %d ",node[i].nil[j]);
-            
+            if(j==0||j==3||j==6)printf("|");
+            if(j==1||j==4||j==7) printf(" %d ",node[i].nil[j]);
+            else printf("%d",node[i].nil[j]);
         }
-        printf("\n");
+        printf("|\n");
     }
+    printf("+-----+-----+-----+");
     
 }
 int cekpos(struct data node[],int b,int k,int n) //bisa ditaruh angka atau tidak
